@@ -3,7 +3,6 @@ project(darling-src)
 unset(CMAKE_C_IMPLICIT_INCLUDE_DIRECTORIES)
 unset(CMAKE_CXX_IMPLICIT_INCLUDE_DIRECTORIES)
 
-cmake_minimum_required(VERSION 2.4.0)
 cmake_policy(SET CMP0005 NEW)
 
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
@@ -15,11 +14,7 @@ add_subdirectory(libelfloader/native)
 add_subdirectory(bsdln)
 
 add_definitions(
-	-D_DARWIN_C_SOURCE
-	-D_POSIX_C_SOURCE
 	-DDARLING
-	-D__APPLE__
-	-D__DYNAMIC__
 )
 
 set(DARLING TRUE)
@@ -61,14 +56,17 @@ add_subdirectory(buildtools)
 add_subdirectory(libelfloader/wrapgen)
 add_subdirectory(startup)
 
+add_subdirectory(bootstrap_cmds)
+
 add_definitions(
-	-D_DARWIN_C_SOURCE
-	-D_POSIX_C_SOURCE
 	-D__APPLE__
 	-D__DYNAMIC__
+	-D__MACH__
+	-D_DARWIN_C_SOURCE
+	-D_POSIX_C_SOURCE
+	-DDARWIN
+	-DTARGET_OS_MAC=1
 )
-
-add_subdirectory(bootstrap_cmds)
 
 set(CMAKE_AR "${CMAKE_BINARY_DIR}/src/external/cctools-port/cctools/ar/x86_64-apple-darwin11-ar")
 set(CMAKE_RANLIB "${CMAKE_BINARY_DIR}/src/external/cctools-port/cctools/misc/ranlib")
@@ -93,7 +91,7 @@ include_directories(
 
 include_directories(AFTER
 	${CMAKE_CURRENT_SOURCE_DIR}/DiskArbitration/include
-	${CMAKE_CURRENT_SOURCE_DIR}/CoreAudioOld/include
+	${CMAKE_CURRENT_SOURCE_DIR}/CoreAudio/include
 	${CMAKE_CURRENT_SOURCE_DIR}/external/SmartCardServices/include
 	${CMAKE_CURRENT_SOURCE_DIR}/login/include
 	${CMAKE_CURRENT_SOURCE_DIR}/external/IOKitUser/include
@@ -258,6 +256,8 @@ add_subdirectory(external/openpam)
 add_subdirectory(external/libtelnet)
 add_subdirectory(external/remote_cmds)
 add_subdirectory(external/IOKitUser)
+add_subdirectory(CoreAudio)
+#add_subdirectory(external/OpenAL)
 add_subdirectory(external/python_modules)
 add_subdirectory(SystemConfiguration)
 #add_subdirectory(VideoDecodeAcceleration)
