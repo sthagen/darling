@@ -172,6 +172,13 @@ set(emulation_sources
 	misc/setlogin.c
 	misc/reboot.c
 	misc/iopolicysys.c
+	misc/csops.c
+	misc/fileport_makeport.c
+	misc/fileport_makefd.c
+	misc/csrctl.c
+	misc/fsgetpath.c
+	misc/abort_with_payload.c
+	misc/clonefile.c
 	fcntl/open.c
 	fcntl/openat.c
 	fcntl/fcntl.c
@@ -258,6 +265,7 @@ set(emulation_sources
 	ext/futex.c
 	ext/mremap.c
 	ext/file_handle.c
+	ext/fanotify.c
 	bsdthread/bsdthread_register.c
 	bsdthread/bsdthread_create.c
 	bsdthread/bsdthread_terminate.c

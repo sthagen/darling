@@ -69,10 +69,11 @@ add_definitions(
 )
 
 set(CMAKE_AR "${CMAKE_BINARY_DIR}/src/external/cctools-port/cctools/ar/x86_64-apple-darwin11-ar")
-set(CMAKE_RANLIB "${CMAKE_BINARY_DIR}/src/external/cctools-port/cctools/misc/ranlib")
+set(CMAKE_RANLIB "${CMAKE_BINARY_DIR}/src/external/cctools-port/cctools/ar/x86_64-apple-darwin11-ranlib")
 
 add_definitions(-target x86_64-apple-darwin11)
 include(darling_lib)
+include(darling_static_lib)
 
 include_directories(
 	${CMAKE_CURRENT_SOURCE_DIR}/libc/include
@@ -133,7 +134,7 @@ include_directories(AFTER
 	${CMAKE_CURRENT_SOURCE_DIR}/libedit/include
 	${CMAKE_CURRENT_SOURCE_DIR}/external/bzip2/include
 	${CMAKE_CURRENT_SOURCE_DIR}/libnotify/include
-	${CMAKE_CURRENT_SOURCE_DIR}/opendirectory/include
+	${CMAKE_CURRENT_SOURCE_DIR}/opendirectory_internal/include
 	${CMAKE_CURRENT_SOURCE_DIR}/external/commoncrypto/include
 	${CMAKE_CURRENT_SOURCE_DIR}/quarantine/include
 	${CMAKE_CURRENT_SOURCE_DIR}/libpmenergy/include
@@ -216,6 +217,7 @@ add_subdirectory(libinfo)
 add_subdirectory(quarantine)
 add_subdirectory(libmalloc)
 add_subdirectory(libunwind)
+add_subdirectory(networkextension)
 add_subdirectory(libsystem)
 add_subdirectory(libsystem_coreservices)
 add_subdirectory(libutil)
@@ -256,6 +258,7 @@ add_subdirectory(external/openpam)
 add_subdirectory(external/libtelnet)
 add_subdirectory(external/remote_cmds)
 add_subdirectory(external/IOKitUser)
+add_subdirectory(external/IOKitTools)
 add_subdirectory(CoreAudio)
 #add_subdirectory(external/OpenAL)
 add_subdirectory(external/python_modules)
@@ -361,7 +364,7 @@ add_subdirectory(IOBluetooth)
 add_subdirectory(libsandbox)
 add_subdirectory(OpenCL)
 add_subdirectory(OpenDirectory)
-add_subdirectory(opendirectory)
+add_subdirectory(opendirectory_internal)
 add_subdirectory(MetalKit)
 add_subdirectory(external/cups)
 
@@ -375,10 +378,25 @@ add_subdirectory(DirectoryServices)
 add_subdirectory(DrawSprocket)
 add_subdirectory(EventKit)
 add_subdirectory(external/cocotron/CoreGraphics)
+add_subdirectory(external/fmdb)
 
 add_subdirectory(frameworks)
 add_subdirectory(private-frameworks)
 add_subdirectory(external/usertemplate)
+
+add_subdirectory(external/lkm)
+
+add_subdirectory(external/cocotron/Onyx2D)
+add_subdirectory(external/cocotron/AppKit)
+add_subdirectory(external/cocotron/CoreText)
+add_subdirectory(external/cocotron/Cocoa)
+add_subdirectory(external/cocotron/CoreData)
+add_subdirectory(external/cocotron/QuartzCore)
+add_subdirectory(pboard)
+
+add_subdirectory(external/dbuskit)
+add_subdirectory(external/swift)
+
 
 # /Applications
 #add_subdirectory(external/TextEdit)
@@ -411,16 +429,6 @@ add_subdirectory(external/libauto)
 add_subdirectory(external/WTF)
 add_subdirectory(external/bmalloc)
 add_subdirectory(external/dtrace)
-
-add_subdirectory(external/lkm)
-
-add_subdirectory(external/cocotron/Onyx2D)
-add_subdirectory(external/cocotron/AppKit)
-add_subdirectory(external/cocotron/CoreText)
-add_subdirectory(external/cocotron/Cocoa)
-add_subdirectory(external/cocotron/CoreData)
-add_subdirectory(external/cocotron/QuartzCore)
-add_subdirectory(pboard)
 
 if(FULL_BUILD)
 add_subdirectory(external/JavaScriptCore)

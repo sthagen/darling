@@ -18,6 +18,7 @@
 */
 
 #include <LaunchServices/LaunchServices.h>
+#include <LaunchServices/LaunchServicesPriv.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <launch_priv.h>
@@ -28,16 +29,6 @@ OSStatus LSRegisterURL(CFURLRef inURL, Boolean inUpdate)
 {
 	printf("STUB: LSRegisterURL\n");
 	return 0;
-}
-
-OSStatus LSOpenCFURLRef(CFURLRef inURL, CFURLRef *outLaunchedURL)
-{
-	OSStatus ret;
-	LSLaunchURLSpec spec;
-	spec.itemURLs = CFArrayCreate(kCFAllocatorDefault, (const void**)&inURL, 1, NULL);
-	ret = LSOpenFromURLSpec(&spec, outLaunchedURL);
-	CFRelease(spec.itemURLs);
-	return ret;
 }
 
 OSStatus LSOpenFromURLSpec(const LSLaunchURLSpec *inLaunchSpec, CFURLRef *outLaunchedURL)

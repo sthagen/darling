@@ -16,6 +16,7 @@ add_definitions(-Dmovsxw=movswl -DPRIVATE)
 set(libm_sources
 	Source/abs.c
 	Source/sincos.c
+	Source/exp10.c
 	#Source/nan.c
 	#Source/nanl.c
 	#Source/version_info.c
@@ -175,7 +176,6 @@ add_circular(system_m FAT
 install(TARGETS system_m DESTINATION libexec/darling/usr/lib/system)
 
 set(CMAKE_AR "${CMAKE_BINARY_DIR}/src/external/cctools-port/cctools/ar/x86_64-apple-darwin11-ar")
-set(CMAKE_RANLIB "${CMAKE_BINARY_DIR}/src/external/cctools-port/cctools/misc/ranlib")
-add_library(system_m_static STATIC ${libm_sources} $<TARGET_OBJECTS:system_m_extra>)
-add_dependencies(system_m_static ranlib x86_64-apple-darwin11-ar)
+set(CMAKE_RANLIB "${CMAKE_BINARY_DIR}/src/external/cctools-port/cctools/ar/x86_64-apple-darwin11-ranlib")
+add_darling_static_library(system_m_static SOURCES ${libm_sources} $<TARGET_OBJECTS:system_m_extra>)
 make_fat(system_m_static)
