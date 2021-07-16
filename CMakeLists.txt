@@ -10,6 +10,8 @@ if (NOT DEFINED CMAKE_C_COMPILER)
 		"clang-7"
 		"clang-9"
 		"clang-10"
+		"clang-11"
+		"clang-12"
 )
 endif(NOT DEFINED CMAKE_C_COMPILER)
 
@@ -21,6 +23,8 @@ if (NOT DEFINED CMAKE_CXX_COMPILER)
 		"clang++-7"
 		"clang++-9"
 		"clang++-10"
+		"clang++-11"
+		"clang++-12"
 )
 endif(NOT DEFINED CMAKE_CXX_COMPILER)
 
@@ -152,6 +156,8 @@ InstallSymlink(/Volumes/SystemRoot/etc/group ${CMAKE_INSTALL_PREFIX}/libexec/dar
 InstallSymlink(/Volumes/SystemRoot/etc/localtime ${CMAKE_INSTALL_PREFIX}/libexec/darling/etc/localtime)
 
 InstallSymlink(/Volumes/SystemRoot/usr/share/zoneinfo ${CMAKE_INSTALL_PREFIX}/libexec/darling/usr/share/zoneinfo)
+
+install(DIRECTORY DESTINATION libexec/darling/Library/Preferences)
 
 if(NOT DEBIAN_PACKAGING)
 	install(CODE "execute_process(COMMAND bash ${DARLING_TOP_DIRECTORY}/tools/shutdown-user.sh)")

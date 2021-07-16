@@ -1,3 +1,4 @@
+
 #include <string>
 #include <iostream>
 #include <set>
@@ -11,6 +12,7 @@
 #include <sstream>
 #include <stdexcept>
 #include <fstream>
+#include <link.h>
 
 #ifndef PATH_MAX
 #	define PATH_MAX	4096
@@ -21,19 +23,20 @@
 
 // TODO: use wrapgen32 to generate 32-bit wrappers.
 
-void parse_elf(const char* elf, std::string& soname_out, std::set<std::string>& symbols_out);
+void parse_elf(const char* elf, std::string& soname_out, std::set<std::string>& functions_out, std::set<std::string>& vars_out);
 void generate_wrapper(std::ofstream& output, const char* soname, const std::set<std::string>& symbols);
+void generate_var_wrappers(std::ofstream& output, std::ofstream& outputHeader, const std::set<std::string>& vars);
 
 int main(int argc, const char** argv)
 {
 	std::string elfLibrary;
-	std::set<std::string> symbols;
+	std::set<std::string> functions, vars;
 	std::string soname;
 	std::ofstream output;
 
-	if (argc != 3)
+	if (argc != 4)
 	{
-		std::cerr << "Usage: " << argv[0] << " <library-name> <output-file>\n";
+		std::cerr << "Usage: " << argv[0] << " <library-name> <output-file> <var-access-header>\n";
 		return 1;
 	}
 
@@ -51,7 +54,7 @@ int main(int argc, const char** argv)
 			// It is simpler than parsing /etc/ld.so.conf.
 
 			void* handle = dlopen(elfLibrary.c_str(), RTLD_LAZY | RTLD_LOCAL);
-			char path[PATH_MAX];
+			struct link_map* lm = NULL;
 
 			if (!handle)
 			{
@@ -60,10 +63,9 @@ int main(int argc, const char** argv)
 				throw std::runtime_error(ss.str());
 			}
 
-			if (dlinfo(handle, RTLD_DI_ORIGIN, path) == 0)
+			if (dlinfo(handle, RTLD_DI_LINKMAP, &lm) == 0)
 			{
-				elfLibrary.insert(0, "/");
-				elfLibrary.insert(0, path);
+				elfLibrary = lm->l_name;
 			}
 			else
 			{
@@ -75,8 +77,17 @@ int main(int argc, const char** argv)
 			dlclose(handle);
 		}
 
-		parse_elf(elfLibrary.c_str(), soname, symbols);
-		generate_wrapper(output, soname.c_str(), symbols);
+		parse_elf(elfLibrary.c_str(), soname, functions, vars);
+		generate_wrapper(output, soname.c_str(), functions);
+
+		if (!vars.empty())
+		{
+			std::ofstream outputHeader(argv[3]);
+			if (!outputHeader.is_open())
+				throw std::runtime_error("Cannot open output macro header file");
+
+			generate_var_wrappers(output, outputHeader, vars);
+		}
 	}
 	catch (const std::exception& e)
 	{
@@ -87,7 +98,7 @@ int main(int argc, const char** argv)
 	return 0;
 }
 
-void parse_elf(const char* elf, std::string& soname, std::set<std::string>& symbols)
+void parse_elf(const char* elf, std::string& soname, std::set<std::string>& symbols, std::set<std::string>& vars)
 {
 	int fd;
 	const Elf64_Ehdr* ehdr;
@@ -208,7 +219,10 @@ end_dyn:
 					if (ELF64_ST_VISIBILITY(sym->st_other) != STV_DEFAULT)
 						continue;
 
-					symbols.insert(strings + sym->st_name);
+					if (ELF64_ST_TYPE(sym->st_info) == STT_FUNC)
+						symbols.insert(strings + sym->st_name);
+					else
+						vars.insert(strings + sym->st_name);
 				}
 
 				break;
@@ -263,3 +277,24 @@ void generate_wrapper(std::ofstream& output, const char* soname, const std::set<
 		"___elfname: .asciz \\\"" << soname << "\\\"\");\n";
 }
 
+void generate_var_wrappers(std::ofstream& output, std::ofstream& outputHeader, const std::set<std::string>& vars)
+{
+	outputHeader << "#pragma once\n\n";
+	outputHeader << "#ifdef __cplusplus\n"
+		"extern \"C\" {\n"
+		"#endif\n\n";
+
+	for (const std::string& sym : vars)
+	{
+		output << "void* __elf_get_" << sym << "(void) {\n"
+			"\treturn _elfcalls->dlsym_fatal(lib_handle, \"" << sym << "\");\n"
+			"}\n\n";
+		
+		outputHeader << "extern __typeof(" << sym << ")* __elf_get_" << sym << "(void);\n"
+			"#define " << sym << " (*__elf_get_" << sym << "())\n\n";
+	}
+
+	outputHeader << "\n\n#ifdef __cplusplus\n"
+		"}\n"
+		"#endif\n\n";
+}

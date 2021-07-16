@@ -195,6 +195,7 @@ add_subdirectory(external/compiler-rt/lib/builtins)
 add_subdirectory(csu)
 add_subdirectory(external/BerkeleyDB)
 add_subdirectory(external/python/2.7/Python-2.7.16)
+add_subdirectory(external/pyobjc)
 add_subdirectory(external/ruby)
 add_subdirectory(external/expat)
 add_subdirectory(shellspawn)
@@ -273,8 +274,8 @@ add_subdirectory(clt)
 
 add_subdirectory(diskutil)
 
-# Just a stub
-add_subdirectory(external/cocotron/CoreGraphics)
+add_subdirectory(external/cocotron)
+
 add_subdirectory(external/fmdb)
 
 add_subdirectory(frameworks)
@@ -283,12 +284,6 @@ add_subdirectory(external/usertemplate)
 
 add_subdirectory(external/lkm)
 
-add_subdirectory(external/cocotron/Onyx2D)
-add_subdirectory(external/cocotron/AppKit)
-add_subdirectory(external/cocotron/CoreText)
-add_subdirectory(external/cocotron/Cocoa)
-add_subdirectory(external/cocotron/CoreData)
-add_subdirectory(external/cocotron/QuartzCore)
 add_subdirectory(pboard)
 
 add_subdirectory(external/dbuskit)
@@ -296,6 +291,7 @@ add_subdirectory(external/swift)
 
 add_subdirectory(libaccessibility)
 
+add_subdirectory(external/openjdk)
 
 # /Applications
 #add_subdirectory(external/TextEdit)

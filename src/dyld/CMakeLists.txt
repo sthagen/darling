@@ -1,6 +1,6 @@
 project(dyld-apple)
 
-cmake_minimum_required(VERSION 2.4.0)
+cmake_minimum_required(VERSION 3.10)
 
 if(COMMAND cmake_policy)
     cmake_policy(SET CMP0003 NEW)
@@ -121,6 +121,7 @@ add_executable(system_loader
 )
 
 use_ld64(system_loader)
+dsym(system_loader)
 set_target_properties(system_loader PROPERTIES OUTPUT_NAME "dyld")
 set_property(TARGET system_loader APPEND_STRING PROPERTY
 	COMPILE_FLAGS " -DBUILDING_DYLD=1 -gfull -fPIC -fno-stack-check")

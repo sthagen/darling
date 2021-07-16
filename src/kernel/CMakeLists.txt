@@ -1,6 +1,6 @@
 project(darling-libsystem_kernel)
 
-cmake_minimum_required(VERSION 2.4.0)
+cmake_minimum_required(VERSION 3.10)
 if(COMMAND cmake_policy)
 	cmake_policy(SET CMP0003 NEW)
 	cmake_policy(SET CMP0018 NEW)
@@ -36,8 +36,8 @@ add_subdirectory(libsyscall)
 set(DYLIB_INSTALL_NAME "/usr/lib/system/libsystem_kernel.dylib")
 add_circular(system_kernel FAT
 	OBJECTS
-		$<TARGET_OBJECTS:libsyscall_32>
-		$<TARGET_OBJECTS:libsyscall_64>
+		$<IF:$<BOOL:${BUILD_TARGET_32BIT}>,$<TARGET_OBJECTS:libsyscall_32>,>
+		$<IF:$<BOOL:${BUILD_TARGET_64BIT}>,$<TARGET_OBJECTS:libsyscall_64>,>
 		$<TARGET_OBJECTS:libsyscall>
 		$<TARGET_OBJECTS:libsyscall_dynamic>
 		#$<TARGET_OBJECTS:kqueue>
